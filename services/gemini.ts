@@ -1,9 +1,10 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Transaction, FraudCase, AnalysisResult } from "../types";
 
-// NOTE: Using the prompt provided instruction to use process.env.API_KEY
-// In a real deployment, ensure your bundler (Vite/Webpack) exposes this.
-const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY || (import.meta.env as any).VITE_GEMINI_API_KEY;
+// NOTE: Vite exposes environment variables with VITE_ prefix via import.meta.env
+// This is the primary method for client-side access in Vite projects
+const viteEnv = import.meta.env as Record<string, string>;
+const apiKey = viteEnv.VITE_GEMINI_API_KEY || process.env.API_KEY || process.env.GEMINI_API_KEY;
 
 // Diagnostic logging
 if (typeof window !== 'undefined') {
@@ -11,14 +12,15 @@ if (typeof window !== 'undefined') {
   console.log("🔍 [Gemini Service] Initializing with API Key Check");
   console.log("   ✓ process.env.API_KEY defined:", typeof process.env.API_KEY !== 'undefined');
   console.log("   ✓ process.env.GEMINI_API_KEY defined:", typeof process.env.GEMINI_API_KEY !== 'undefined');
-  console.log("   ✓ import.meta.env.VITE_GEMINI_API_KEY defined:", typeof (import.meta.env as any).VITE_GEMINI_API_KEY !== 'undefined');
+  console.log("   ✓ import.meta.env.VITE_GEMINI_API_KEY defined:", typeof viteEnv.VITE_GEMINI_API_KEY !== 'undefined');
+  console.log("   📋 API Key value (first 10 chars):", viteEnv.VITE_GEMINI_API_KEY?.substring(0, 10) || "undefined");
 }
 
 if (!apiKey) {
   console.error("❌ CRITICAL: Gemini API Key not found in environment variables");
   console.error("   - process.env.API_KEY:", process.env.API_KEY);
   console.error("   - process.env.GEMINI_API_KEY:", process.env.GEMINI_API_KEY);
-  console.error("   - import.meta.env.VITE_GEMINI_API_KEY:", (import.meta.env as any).VITE_GEMINI_API_KEY);
+  console.error("   - import.meta.env.VITE_GEMINI_API_KEY:", viteEnv.VITE_GEMINI_API_KEY);
   console.log("   ℹ️ Check your .env.local file has: VITE_GEMINI_API_KEY=your_key");
 } else {
   console.log("✅ Gemini API Key loaded successfully:", apiKey.substring(0, 10) + "...");
