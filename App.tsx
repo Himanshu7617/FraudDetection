@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Transaction, FraudCase, UserProfile, DashboardMetrics } from './types';
+import { Transaction, FraudCase, UserProfile, DashboardMetrics, DocumentStore } from './types';
 import { generateTransaction, calculateStats } from './services/simulation';
 import { calculateMetrics, generateAlerts, recordMetricsSnapshot, MetricsSnapshot } from './services/metrics';
+import { getDocumentStore } from './services/documentStore';
 import TransactionStream from './components/TransactionStream';
 import AnalystPanel from './components/AnalystPanel';
 import Dashboard from './components/Dashboard';
+import DocumentStoreViewer from './components/DocumentStoreViewer';
 import ToastContainer, { ToastMessage } from './components/Toast';
 import { INITIAL_KNOWLEDGE_BASE, ICONS } from './constants';
 
@@ -15,8 +17,10 @@ const App: React.FC = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [showDashboard, setShowDashboard] = useState(false);
+  const [showDocumentStore, setShowDocumentStore] = useState(false);
   const metricsHistoryRef = useRef<MetricsSnapshot[]>([]);
   const [dashboardMetrics, setDashboardMetrics] = useState<DashboardMetrics | null>(null);
+  const [documentStore] = useState<DocumentStore>(getDocumentStore());
 
   // Simulation State
   const historyRef = useRef<number[]>([45, 60, 55, 12, 40, 50, 48]); // Seed history
@@ -125,7 +129,25 @@ const App: React.FC = () => {
       <nav className="w-16 flex flex-col items-center py-6 border-r border-slate-800 bg-slate-900 z-20 mt-16">
         <div className="flex-1 flex flex-col gap-6 w-full items-center">
           <button
-            onClick={() => setShowDashboard(!showDashboard)}
+            onClick={() => {
+              setShowDashboard(false);
+              setShowDocumentStore(!showDocumentStore);
+            }}
+            className={`p-3 rounded-lg transition relative group ${
+              showDocumentStore
+                ? 'bg-slate-800 text-orange-400'
+                : 'text-slate-500 hover:bg-slate-800 hover:text-orange-400'
+            }`}
+            aria-label="Document Store"
+          >
+             {ICONS.Database}
+             <span className="absolute left-full ml-2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Document Store</span>
+          </button>
+          <button
+            onClick={() => {
+              setShowDocumentStore(false);
+              setShowDashboard(!showDashboard);
+            }}
             className={`p-3 rounded-lg transition relative group ${
               showDashboard
                 ? 'bg-slate-800 text-purple-400'
@@ -164,7 +186,10 @@ const App: React.FC = () => {
       <div className="flex-1 flex overflow-hidden relative mt-16">
         <ToastContainer messages={toasts} onRemove={removeToast} />
 
-        {showDashboard ? (
+        {showDocumentStore ? (
+          // Document Store View
+          <DocumentStoreViewer documentStore={documentStore} />
+        ) : showDashboard ? (
           // Dashboard View
           <>
             {dashboardMetrics && <Dashboard metrics={dashboardMetrics} />}
