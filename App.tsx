@@ -87,35 +87,48 @@ const App: React.FC = () => {
   return (
     <div className="h-screen w-screen bg-slate-950 text-slate-200 flex overflow-hidden font-sans">
       
-      {/* Sidebar / Nav */}
-      <nav className="w-16 flex flex-col items-center py-6 border-r border-slate-800 bg-slate-900 z-20">
-        <div className="mb-8 p-2 bg-blue-600 rounded-lg text-white shadow-lg shadow-blue-500/20">
-           {ICONS.Shield}
+      {/* Top Nav Bar */}
+      <div className="fixed top-0 left-0 right-0 h-16 bg-slate-900 border-b border-slate-800 z-20 flex items-center px-6">
+        <div className="flex items-center gap-3 group cursor-pointer hover:opacity-80 transition-opacity">
+          <div className="p-2 bg-blue-600 rounded-lg text-white shadow-lg shadow-blue-500/20 group-hover:shadow-blue-400/40 transition-all">
+            {ICONS.Shield}
+          </div>
+          <div className="flex flex-col">
+            <h1 className="text-lg font-bold text-white">FraudLens</h1>
+            <p className="text-xs text-slate-400">Hybrid Detection</p>
+          </div>
         </div>
-        
+      </div>
+
+      {/* Sidebar / Nav */}
+      <nav className="w-16 flex flex-col items-center py-6 border-r border-slate-800 bg-slate-900 z-20 mt-16">
         <div className="flex-1 flex flex-col gap-6 w-full items-center">
-          <button className="p-3 bg-slate-800 text-blue-400 rounded-lg transition hover:bg-slate-700" title="Live Monitor">
+          <button className="p-3 bg-slate-800 text-blue-400 rounded-lg transition hover:bg-slate-700 relative group" aria-label="Live Monitor">
              {ICONS.Activity}
+             <span className="absolute left-full ml-2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Live Monitor</span>
           </button>
-          <button 
+          <button
             onClick={triggerFraudEvent}
-            className="p-3 text-yellow-500 hover:bg-slate-800 rounded-lg transition hover:text-yellow-400"
-            title="Inject Fraud Event (Demo)"
+            className="p-3 text-yellow-500 hover:bg-slate-800 rounded-lg transition hover:text-yellow-400 relative group"
+            aria-label="Inject Fraud Event"
           >
              {ICONS.Zap}
+             <span className="absolute left-full ml-2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Inject Event</span>
           </button>
         </div>
 
-        <button 
+        <button
           onClick={() => setIsPaused(!isPaused)}
-          className={`p-2 rounded-full font-bold text-[10px] w-12 h-12 flex items-center justify-center mb-4 transition-colors ${isPaused ? 'bg-green-600 text-white' : 'bg-slate-800 text-slate-400'}`}
+          className={`p-2 rounded-full font-bold text-[10px] w-12 h-12 flex items-center justify-center mb-4 transition-colors relative group ${isPaused ? 'bg-green-600 text-white' : 'bg-slate-800 text-slate-400'}`}
+          aria-label={isPaused ? 'Play' : 'Pause'}
         >
           {isPaused ? 'PLAY' : 'PAUSE'}
+          <span className="absolute left-full ml-2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">{isPaused ? 'Resume' : 'Pause'}</span>
         </button>
       </nav>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex overflow-hidden relative">
+      <div className="flex-1 flex overflow-hidden relative mt-16">
         <ToastContainer messages={toasts} onRemove={removeToast} />
         
         {/* Stream Column */}

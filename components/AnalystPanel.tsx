@@ -142,7 +142,7 @@ const AnalystPanel: React.FC<Props> = ({
       </div>
 
       {/* RIGHT: Gemini AI Analyst */}
-      <div className="w-full lg:w-[450px] bg-slate-900 p-6 border-l border-slate-800 flex flex-col">
+      <div className="w-full lg:w-[450px] bg-slate-900 p-6 border-l border-slate-800 flex flex-col justify-between">
         <div className="flex items-center gap-2 mb-6">
           <div className="p-2 bg-purple-500/20 rounded-lg text-purple-400">
             {ICONS.Brain}
@@ -150,7 +150,7 @@ const AnalystPanel: React.FC<Props> = ({
           <h2 className="text-lg font-bold text-white">Gemini Analyst</h2>
         </div>
 
-        <div className="flex-1 overflow-y-auto mb-4 space-y-4">
+        <div className="flex-1 overflow-y-auto mb-6 space-y-4">
           {!analysis && !loading && (
              <div className="text-center mt-20 text-slate-600">
                <p>AI Analysis ready.</p>
@@ -207,8 +207,8 @@ const AnalystPanel: React.FC<Props> = ({
           )}
         </div>
 
-        {/* Action Buttons */}
-        <div className="pt-4 border-t border-slate-800">
+        {/* Action Buttons - Sticky at bottom */}
+        <div className="sticky bottom-0 pt-4 border-t border-slate-800 bg-slate-900">
           <div className="grid grid-cols-2 gap-3">
              <button
                onClick={() => handleAction('ALLOW')}
