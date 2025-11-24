@@ -66,7 +66,16 @@ export const analyzeTransactionWithGemini = async (
     console.log("🚀 [Gemini API] Calling generateContent with model:", model);
     const result = await genAI.models.generateContent({
       model: model,
-      contents: prompt,
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              text: prompt
+            }
+          ]
+        }
+      ],
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -93,9 +102,12 @@ export const analyzeTransactionWithGemini = async (
 
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
+
     console.error("❌ Gemini Analysis Failed:", {
       error: errorMsg,
+      fullError: JSON.stringify(error),
       apiKeyPresent: !!apiKey,
+      apiKeyLength: apiKey?.length,
       timestamp: new Date().toISOString()
     });
 
@@ -104,11 +116,13 @@ export const analyzeTransactionWithGemini = async (
     if (!apiKey) {
       failureReason = "API Key not configured. See console for details.";
     } else if (errorMsg.includes("INVALID_ARGUMENT")) {
-      failureReason = "Invalid or expired API Key.";
+      failureReason = "Invalid API request format.";
     } else if (errorMsg.includes("429")) {
       failureReason = "API rate limit exceeded. Try again later.";
     } else if (errorMsg.includes("UNAUTHENTICATED")) {
       failureReason = "API authentication failed. Check your key.";
+    } else if (errorMsg.includes("PERMISSION_DENIED")) {
+      failureReason = "API key not authorized. Check API Key in Google AI Studio.";
     }
 
     return {
