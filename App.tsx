@@ -133,6 +133,7 @@ const App: React.FC = () => {
           <button
             onClick={() => {
               setShowDashboard(false);
+              setShowChatBot(false);
               setShowDocumentStore(!showDocumentStore);
             }}
             className={`p-3 rounded-lg transition relative group ${
@@ -148,6 +149,7 @@ const App: React.FC = () => {
           <button
             onClick={() => {
               setShowDocumentStore(false);
+              setShowChatBot(false);
               setShowDashboard(!showDashboard);
             }}
             className={`p-3 rounded-lg transition relative group ${
