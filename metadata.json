@@ -1,0 +1,5 @@
+{
+  "name": "Sentinel AI: Hybrid Fraud Detection",
+  "description": "A sophisticated fraud detection dashboard combining fast streaming behavioral analytics (Pathway simulation) with a Generative AI Analyst (Gemini) for reasoning and feedback loops.",
+  "requestFramePermissions": []
+}
