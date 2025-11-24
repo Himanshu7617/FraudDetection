@@ -25,7 +25,9 @@ const ChatBot: React.FC<Props> = ({ transaction, knowledgeBase }) => {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const recognitionRef = useRef<any>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -34,6 +36,52 @@ const ChatBot: React.FC<Props> = ({ transaction, knowledgeBase }) => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Initialize Web Speech API
+  useEffect(() => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = true;
+      recognitionRef.current.language = 'en-US';
+
+      recognitionRef.current.onstart = () => {
+        setIsListening(true);
+      };
+
+      recognitionRef.current.onresult = (event: any) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        setInput(transcript);
+      };
+
+      recognitionRef.current.onerror = (event: any) => {
+        console.error('Speech recognition error', event.error);
+        setIsListening(false);
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
+    }
+  }, []);
+
+  const startListening = () => {
+    if (recognitionRef.current) {
+      setInput('');
+      recognitionRef.current.start();
+    }
+  };
+
+  const stopListening = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    }
+  };
 
   const generateResponse = async (userMessage: string): Promise<string> => {
     const lowerMessage = userMessage.toLowerCase();
@@ -238,6 +286,26 @@ Respond concisely and specifically. If the user asks about something not in your
             rows={2}
             className="flex-1 bg-slate-800 text-white placeholder-slate-500 rounded-lg px-3 py-2 border border-slate-700 focus:border-blue-500 focus:outline-none resize-none"
           />
+          {recognitionRef.current && (
+            <button
+              onClick={isListening ? stopListening : startListening}
+              className={`px-4 py-2 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 ${
+                isListening
+                  ? 'bg-red-600 hover:bg-red-500 text-white animate-pulse'
+                  : 'bg-slate-700 hover:bg-slate-600 text-white'
+              }`}
+              title={isListening ? 'Click to stop listening' : 'Click to start listening'}
+            >
+              {isListening ? (
+                <>
+                  <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                  Stop
+                </>
+              ) : (
+                '🎤'
+              )}
+            </button>
+          )}
           <button
             onClick={handleSendMessage}
             disabled={!input.trim() || loading}
@@ -251,7 +319,7 @@ Respond concisely and specifically. If the user asks about something not in your
           </button>
         </div>
         <p className="text-xs text-slate-500 mt-2">
-          💡 Tip: Ask about current transaction, knowledge base, risk factors, or how the system works
+          💡 Tip: Use microphone button to speak, type questions, or ask about current transaction, knowledge base, risk factors
         </p>
       </div>
     </div>
