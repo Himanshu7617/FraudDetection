@@ -1,8 +1,9 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Transaction, FraudCase, AnalysisResult } from "../types";
 
-// Load API key from Vite environment variable
-const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY as string });
+// NOTE: Using the prompt provided instruction to use process.env.API_KEY
+// In a real deployment, ensure your bundler (Vite/Webpack) exposes this.
+const genAI = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const analyzeTransactionWithGemini = async (
   transaction: Transaction,
