@@ -9,6 +9,7 @@ import Dashboard from './components/Dashboard';
 import DocumentStoreViewer from './components/DocumentStoreViewer';
 import ChatBot from './components/ChatBot';
 import ToastContainer, { ToastMessage } from './components/Toast';
+import LanguageSelector from './components/LanguageSelector';
 import { INITIAL_KNOWLEDGE_BASE, ICONS } from './constants';
 
 const App: React.FC = () => {
@@ -115,7 +116,7 @@ const App: React.FC = () => {
     <div className="h-screen w-screen bg-slate-950 text-slate-200 flex overflow-hidden font-sans">
       
       {/* Top Nav Bar */}
-      <div className="fixed top-0 left-0 right-0 h-16 bg-slate-900 border-b border-slate-800 z-20 flex items-center px-6">
+      <div className="fixed top-0 left-0 right-0 h-16 bg-slate-900 border-b border-slate-800 z-20 flex items-center justify-between px-6">
         <div className="flex items-center gap-3 group cursor-pointer hover:opacity-80 transition-opacity">
           <div className="p-2 bg-blue-600 rounded-lg text-white shadow-lg shadow-blue-500/20 group-hover:shadow-blue-400/40 transition-all">
             {ICONS.Shield}
@@ -124,6 +125,9 @@ const App: React.FC = () => {
             <h1 className="text-lg font-bold text-white">FraudLens</h1>
             <p className="text-xs text-slate-400">Hybrid Detection</p>
           </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <LanguageSelector />
         </div>
       </div>
 
